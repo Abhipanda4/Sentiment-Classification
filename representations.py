@@ -13,7 +13,7 @@ def bag_of_words(dataset):
 def normalized_tf(dataset):
     count_vec = CountVectorizer()
     doc_term_matrix = count_vec.fit_transform(dataset)
-    num_terms = np.sum(doc_term_matrix, axis=0, keepdims=True)
+    num_terms = sparse.diags(1/doc_term_matrix.sum(axis=1).A.ravel())
     doc_term_matrix /= num_terms
 
     return doc_term_matrix

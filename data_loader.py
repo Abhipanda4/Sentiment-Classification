@@ -10,8 +10,7 @@ class DataLoader:
     def read_lines(self, filename):
         with  open(filename) as fp:
             text = fp.read()
-            re.sub('<[^<]+?>', '', text)
-            re.sub('<[^<]+?/>', '', text)
+            text = re.sub('<[^<]+?>', '', text)
             return text
 
     def gen_data(self):
