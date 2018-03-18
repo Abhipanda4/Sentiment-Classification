@@ -8,6 +8,7 @@ from data_loader import DataLoader
 from representations import *;
 from algorithms import *
 
+print("Loading data...")
 if os.path.exists("train.pkl") and False:
     with open("train.pkl", 'rb') as f:
         train_corpus = pickle.load(f)
@@ -35,9 +36,6 @@ n_samples = len(train_corpus) // 2
 Y_train = np.array([0] * n_samples + [1] * n_samples)
 Y_test = deepcopy(Y_train)
 
-algo = "LR"
-rep = "BBoW"
-
 def test_train_split(X):
     X_train = X[ :2 * n_samples]
     X_test = X[2 * n_samples: ]
@@ -46,13 +44,15 @@ def test_train_split(X):
 parser = argparse.ArgumentParser()
 parser.add_argument("--algo", type=str, default="LR",
         choices=("NB", "LR", "MLP", "SVM", "LSTM"))
-parser.add_argument("--rep", type=str, default="tfidf",
+parser.add_argument("--rep", type=str, default="BBoW",
         choices=("BBoW", "NTF", "tfidf", "avg_W2V", "avg_GLoVE",
             "sentence_vector", "par_vector"))
 
 args = parser.parse_args()
 algo = args.algo
 rep = args.rep
+
+print("Analyzing with algorithm: %s, representation: %s" %(algo, rep))
 
 # Naive Bayes Classifier
 if algo == "NB" and rep == "BBoW":
@@ -70,6 +70,11 @@ elif algo == "NB" and rep == "NTF":
     X_train, X_test = test_train_split(X)
     print(naive_bayes(X_train, Y_train, X_test, Y_test))
 
+elif algo == "NB" and rep == "avg_GLoVE":
+    X = avg_GLoVE(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(naive_bayes(X_train, Y_train, X_test, Y_test))
+
 # Logistic Regression Classifier
 elif algo == "LR" and rep == "BBoW":
     X = bag_of_words(train_corpus + test_corpus)
@@ -80,6 +85,24 @@ elif algo == "LR" and rep == "tfidf":
     X = tfidf(train_corpus + test_corpus)
     X_train, X_test = test_train_split(X)
     print(logistic_regression(X_train, Y_train, X_test, Y_test))
+
+elif algo == "LR" and rep == "NTF":
+    X = normalized_tf(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(logistic_regression(X_train, Y_train, X_test, Y_test))
+
+elif algo == "LR" and rep == "avg_W2V":
+    X = avg_word2vec(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(logistic_regression(X_train, Y_train, X_test, Y_test))
+
+elif algo == "LR" and rep == "avg_GLoVE":
+    # X = avg_GLoVE(train_corpus + test_corpus)
+    # X_train, X_test = test_train_split(X)
+    # print(logistic_regression(X_train, Y_train, X_test, Y_test))
+    X_wt = avg_GLoVE(train_corpus + test_corpus, True)
+    X_train_wt, X_test_wt = test_train_split(X_wt)
+    print(logistic_regression(X_train_wt, Y_train, X_test_wt, Y_test))
 
 # SVM Classifier
 elif algo == "SVM" and rep == "BBoW":
@@ -92,9 +115,24 @@ elif algo == "SVM" and rep == "tfidf":
     X_train, X_test = test_train_split(X)
     print(SVM_classification(X_train, Y_train, X_test, Y_test))
 
+elif algo == "SVM" and rep == "NTF":
+    X = normalized_tf(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(SVM_classification(X_train, Y_train, X_test, Y_test))
+
+elif algo == "SVM" and rep == "avg_GLoVE":
+    X = avg_GLoVE(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(SVM_classification(X_train, Y_train, X_test, Y_test))
+
 # Feed Forward Neural Network CLassifier
 elif algo == "MLP" and rep == "BBoW":
     X = bag_of_words(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(feed_forward_NN(X_train, Y_train, X_test, Y_test))
+
+elif algo == "MLP" and rep == "NTF":
+    X = normalized_tf(train_corpus + test_corpus)
     X_train, X_test = test_train_split(X)
     print(feed_forward_NN(X_train, Y_train, X_test, Y_test))
 
@@ -102,3 +140,9 @@ elif algo == "MLP" and rep == "tfidf":
     X = tfidf(train_corpus + test_corpus)
     X_train, X_test = test_train_split(X)
     print(feed_forward_NN(X_train, Y_train, X_test, Y_test))
+
+elif algo == "MLP" and rep == "avg_GLoVE":
+    X = avg_GLoVE(train_corpus + test_corpus)
+    X_train, X_test = test_train_split(X)
+    print(feed_forward_NN(X_train, Y_train, X_test, Y_test))
+

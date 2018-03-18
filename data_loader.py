@@ -1,17 +1,20 @@
 import os
 import re
-from nltk.stem.snowball import SnowballStemmer
+from nltk.corpus import stopwords
 
 class DataLoader:
     def __init__(self, base_dir):
         self.base_dir = base_dir
         self.training_corpus = [] * 2
+        self.stop_words = set(stopwords.words('english'))
 
     def read_lines(self, filename):
         with  open(filename) as fp:
             text = fp.read()
             text = re.sub('<[^<]+?>', '', text)
-            return text
+            text = text.split()
+            new_text = [w for w in text if w not in self.stop_words]
+            return " ".join(new_text)
 
     def gen_data(self):
         pos_samples = os.listdir(self.base_dir + "pos")
