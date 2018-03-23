@@ -53,9 +53,20 @@ algo = args.algo
 rep = args.rep
 use_weights = args.use_weights
 
-print("Representation: %s, algo: %s" %(rep, algo), end=" -- ")
+print("Representation: %s, algo: %s" %(rep, algo))
 
 total_corpus = train_corpus + test_corpus
+if algo == "LSTM":
+    # handle specially
+    if rep == "avg_W2V":
+        X = avg_word2vec(total_corpus, use_LSTM=True)
+        X_train, X_test = test_train_split(X)
+        print(LSTM_classify(X_train, Y_train, X_test, Y_test))
+    elif rep == "avg_GLoVE":
+        X = avg_GLoVE(total_corpus, use_LSTM=True)
+        X_train, X_test = test_train_split(X)
+        print(LSTM_classify(X_train, Y_train, X_test, Y_test))
+
 if rep == "BBoW":
     X = bag_of_words(total_corpus)
 elif rep == "NTF":
@@ -68,9 +79,9 @@ elif rep == "avg_W2V" and use_weights:
     print("Using weights: ")
     X = avg_word2vec(total_corpus, True)
 elif rep == "avg_GLoVE" and not use_weights:
-    print("Using weights: ")
     X = avg_GLoVE(total_corpus)
 elif rep == "avg_GLoVE" and use_weights:
+    print("Using weights: ")
     X = avg_GLoVE(total_corpus, True)
 elif rep == "doc_vec":
     X = doc_vector(total_corpus)
@@ -88,5 +99,3 @@ elif algo == "SVM":
     print(SVM_classification(X_train, Y_train, X_test, Y_test))
 elif algo == "MLP":
     print(feed_forward_NN(X_train, Y_train, X_test, Y_test))
-elif algo == "LSTM":
-    print(LSTM_classification(X_train, Y_train, X_test, Y_test))

@@ -35,14 +35,33 @@ def tfidf(dataset):
     return doc_term_tfidf
 
 
-def avg_word2vec(dataset, use_weights=False):
+def avg_word2vec(dataset, use_weights=False, use_LSTM=False):
     # model = Word2Vec.load_word2vec_format('./W2V/GoogleNews-vectors-negative300.bin', binary=True)
     # model = KeyedVectors.load_word2vec_format('./W2V/GoogleNews-vectors-negative300.bin', binary=True)
     # model.save_word2vec_format('./W2V/GoogleNews-vectors-negative300.txt', binary=False)
     with open("./W2V/GoogleNews-vectors-negative300.txt") as vocab:
-        word2vec_rep = {line.split()[0] : np.array(list(map(float, line.split()[1:])))
+        if os.path.exists("w2v.pkl"):
+            with open("w2v.pkl", 'rb') as f:
+                word2vec_rep = pickle.load(f)
+        else:
+            word2vec_rep = {line.split()[0] : np.array(list(map(float, line.split()[1:])))
             for line in vocab}
+            with open("w2v.pkl", 'wb') as f:
+                pickle.dump(word2vec_rep, f, protocol=pickle.HIGHEST_PROTOCOL)
+
         dim = 300
+        if use_LSTM:
+            # simply return first 100 words(pad with 0 for lesser)
+            max_features = 100
+            zero_padding = [0] * dim
+            rep = []
+            for review in dataset:
+                tmp = [word2vec_rep[w] for w in review.split() if w in word2vec_rep]
+                L = len(tmp)
+                for i in range(L, max_features):
+                    tmp.append(zero_padding)
+                rep.append(tmp[:max_features])
+            return rep
 
         if not use_weights:
             if os.path.exists("w2v_unweighted.pkl"):
@@ -76,13 +95,31 @@ def avg_word2vec(dataset, use_weights=False):
                 return sparse.csr_matrix(doc_term_matrix)
 
 
-def avg_GLoVE(dataset, use_weights=False):
+def avg_GLoVE(dataset, use_weights=False, use_LSTM=False):
     with open("./W2V/glove.6B.300d.txt") as vocab:
-        glove_rep = {line.split()[0] : np.array(list(map(float, line.split()[1:])))
-            for line in vocab}
+        if os.path.exists("glove.pkl"):
+            with open("glove.pkl", 'rb') as f:
+                glove_rep = pickle.load(f)
+        else:
+            glove_rep = {line.split()[0] : np.array(list(map(float, line.split()[1:])))
+                for line in vocab}
+            with open("glove.pkl", 'wb') as f:
+                pickle.dump(glove_rep, f, protocol=pickle.HIGHEST_PROTOCOL)
 
         # dim = len(glove_rep.items())
         dim = 300
+        if use_LSTM:
+            # simply return first 100 words(pad with 0 for lesser)
+            max_features = 100
+            zero_padding = [0] * dim
+            rep = []
+            for review in dataset:
+                tmp = [glove_rep[w] for w in review.split() if w in glove_rep]
+                L = len(tmp)
+                for i in range(L, max_features):
+                    tmp.append(zero_padding)
+                rep.append(tmp[:max_features])
+            return rep
 
         if not use_weights:
             if os.path.exists("glove_unweighted.pkl"):
@@ -144,7 +181,7 @@ def doc_vector(dataset):
         vectors.append(model.docvecs[x])
     return vectors
 
-def sentence_vector(dataset):
+def sentence_vector(dataset, use_LSTM=False):
     saved_doc_model = "./W2V/sentence_vectors.model"
     if os.path.exists(saved_doc_model):
         model = Doc2Vec.load(saved_doc_model)
