@@ -51,3 +51,4 @@ def LSTM_classify(X_train, Y_train, X_test, Y_test):
     model.fit(X_train, Y_train, batch_size=32, epochs=30,
     validation_data=(X_test, Y_test))
     scores = model.evaluate(X_test, Y_test)
+    return scores
