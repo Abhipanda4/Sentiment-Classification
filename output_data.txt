@@ -1,0 +1,32 @@
+Representation: BBoW      , algo: LR -- 0.86968
+Representation: tfidf     , algo: LR -- 0.88444
+Representation: NTF       , algo: LR -- 0.80684
+Representation: sen_vec   , algo: LR -- 0.59136
+Representation: doc_vec   , algo: LR -- 0.61864
+Representation: BBoW      , algo: SVM -- [LibLinear]0.84856
+Representation: tfidf     , algo: SVM -- [LibLinear]0.87344
+Representation: NTF       , algo: SVM -- [LibLinear]0.8512
+Representation: sen_vec   , algo: SVM -- [LibLinear]0.5952
+Representation: doc_vec   , algo: SVM -- [LibLinear]0.61928
+Representation: BBoW      , algo: MLP -- 0.85812
+Representation: tfidf     , algo: MLP -- 0.84928
+Representation: NTF       , algo: MLP -- 0.85804
+Representation: sen_vec   , algo: MLP -- 0.6036
+Representation: doc_vec   , algo: MLP -- 0.64552
+
+Representation: avg_GLoVE , algo: LR -- 0.82192
+Representation: avg_GLoVE , algo: LR -- Using weights: 0.80673
+Representation: avg_W2V   , algo: LR -- 0.83404
+Representation: avg_W2V   , algo: LR -- Using weights: 0.80928
+Representation: avg_GLoVE , algo: SVM -- [LibLinear]0.82256
+Representation: avg_GLoVE , algo: SVM -- Using weights: [LibLinear]0.80512
+Representation: avg_W2V   , algo: SVM -- [LibLinear]0.83736
+Representation: avg_W2V   , algo: SVM -- Using weights: [LibLinear]0.80856
+Representation: avg_GLoVE , algo: MLP -- 0.8232
+Representation: avg_GLoVE , algo: MLP -- Using weights: 0.79504
+Representation: avg_W2V   , algo: MLP -- 0.8396
+Representation: avg_W2V   , algo: MLP -- Using weights: 0.80992
+
+Representation: BBoW      , algo: NB -- 0.83444
+Representation: tfidf     , algo: NB -- 0.83328
+Representation: NTF       , algo: NB -- 0.84892
