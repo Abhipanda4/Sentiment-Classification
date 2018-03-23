@@ -76,12 +76,12 @@ elif rep == "tfidf":
 elif rep == "avg_W2V" and not use_weights:
     X = avg_word2vec(total_corpus)
 elif rep == "avg_W2V" and use_weights:
-    print("Using weights: ")
+    print("Using weights: ", end=" ")
     X = avg_word2vec(total_corpus, True)
 elif rep == "avg_GLoVE" and not use_weights:
     X = avg_GLoVE(total_corpus)
 elif rep == "avg_GLoVE" and use_weights:
-    print("Using weights: ")
+    print("Using weights: ", end=" ")
     X = avg_GLoVE(total_corpus, True)
 elif rep == "doc_vec":
     X = doc_vector(total_corpus)
