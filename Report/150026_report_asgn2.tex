@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+
+\title{Assignment 2: Sentiment Classification}
+\author{Abhisek Panda\\ 150026}
+\date{March 2018}
+
+\begin{document}
+
+\maketitle
+\section{How to run the code?}
+python train.py --algo=A --rep=B --use\_weights=C\\\\
+where A can be anything from (NB, LR, SVM, MLP, LSTM) and B can be anything from (BBoW, NTF, tfidf, avg\_W2V, avg\_GLoVE, doc\_vec, sen\_vec). Set use\_weights=True for term frequency weighted average of word2vec or glove vectors.
+
+Another utility script, runner.sh is also provided which runs all possible combinations and saves output to a file named output\_data.txt; however please note that it will take a lot of time to complete execution.
+\section{Implementation Notes}
+The following external libraries were used for the assignment:
+\begin{itemize}
+	\item nltk and gensim for word processing
+	\item scikit-learn for implementing all algorithms except LSTM
+	\item Keras with tensorflow backend for LSTMs
+	\item Other standard libraries like numpy
+\end{itemize}
+All the models except LSTM were trained on CPU. The LSTM was trained on the GPU servers provided by IITK. Representations were saved onto the file-system to avoid repeated computational intensive calculations.
+\section{Note on Hyperparameters}
+Most of the hyperparameters were set to default values offered by the libraries. Some of the custom set parameters are:
+\begin{itemize}
+	\item In feed forward neural network, 2 hidden layers were used, with 200 and 64 hidden units.
+	\item In LSTM, 128 LSTM units were used in the recurrent layer. Also, dropout was set to 0.2 to prevent over-fitting.
+	\item Word2Vec and GLoVE embedding sizes were fixed to 300.
+	\item The learnt embeddings for doc2vec and sentence2vec were 100 dimensional(sizes kept low for smaller training time). The model was trained for 10 epochs to obtain the embeddings. Higher accuracy is expected if trained for more time.
+\end{itemize}
+\section{Results}
+\begin{table}[h!]
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        ~                  & Naive Bayes & Logistic Regression & SVM   & Feed Forward NN & LSTM \\ \hline
+        BBoW               & 83.44       & \textbf{86.97}      & 84.86 & 85.81           & -    \\ 
+        Normalized BoW     & 84.89       & 80.68               & 85.12 & \textbf{85.80}  & -    \\ 
+        tfidf word vectors & 83.33       & \textbf{88.44}      & 87.34 & 84.93           & -    \\ 
+        Word2Vec           & NA          & 80.93               & 83.74 & 83.96           &  \textbf{84.62}    \\ 
+        Weighted Word2Vec  & NA          & \textbf{83.04}      & 80.86 & 80.99           & -    \\ 
+        GLoVE              & NA          & 82.19               & 82.26 & 82.32           &  \textbf{84.91}    \\ 
+        Weighted GLoVE     & NA          & \textbf{80.67}      & 80.51 & 79.50           & -    \\ 
+        Sentence Vectors   & NA          & 59.14               & 59.52 & \textbf{60.36}  & -    \\ 
+        Document Vectors   & NA          & 61.86               & 61.93 & \textbf{64.55}  & -    \\
+        \hline
+    \end{tabular}
+	\caption{The best algorithms for a fixed representation are highlighted in bold. - means that the combination was not tried in this work.}
+\end{table}
+
+\section{Observations:}
+\begin{itemize}
+	\item Logistic regression performed best in most of the cases, although the accuracies were quite close for all algorithms. This may be attributed to an easy decision boundary between the positive and negative labels.
+	\item LSTMs, which are well known for boosting accuracy in NLP related tasks do not offer any major accuracy boost, although they certainly perform well. This may be due to the fact that the training corpus was quite small and reviews also were mostly very brief.
+	\item Document vectors and sentence vectors give very poor performance compared to other representations. Although they were trained for less number of epochs due to computational constraints, small training size is also responsible for this reduction in performance.
+\end{itemize}
+
+\end{document}
